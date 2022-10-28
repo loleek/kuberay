@@ -17,6 +17,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	rayv1alpha1 "github.com/ray-project/kuberay/ray-operator/apis/ray/v1alpha1"
+	vcbetav1 "volcano.sh/apis/pkg/apis/scheduling/v1beta1"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -31,6 +32,7 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 	utilruntime.Must(rayv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(vcbetav1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -56,6 +58,9 @@ func main() {
 		"Temporary feature flag - to be deleted after testing")
 	flag.BoolVar(&ray.ForcedClusterUpgrade, "forced-cluster-upgrade", false,
 		"Forced cluster upgrade flag")
+	flag.BoolVar(&ray.EnableBatchScheduler, "enable-batch-scheduler", false,
+		"Enable batch scheduler. Currently is volcano, which supports gang scheduler policy.")
+
 	opts := zap.Options{
 		Development: true,
 		TimeEncoder: zapcore.ISO8601TimeEncoder,
